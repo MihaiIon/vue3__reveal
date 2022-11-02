@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.14.8",
+    "@pinia/testing": "^0.0.14",
     "@storybook/addon-actions": "^6.4.0-alpha.22",
     "@storybook/addon-essentials": "^6.4.0-alpha.22",
     "@storybook/addon-links": "^6.4.0-alpha.22",

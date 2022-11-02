@@ -3,9 +3,8 @@ import {
   mount
 } from '@vue/test-utils'
 import {
-  setActivePinia,
-  createPinia
-} from 'pinia'
+  createTestingPinia
+} from '@pinia/testing'
 
 import Component from '@/components/Presenter.vue'
 import Page from '@/components/Page.vue'
@@ -14,18 +13,16 @@ import {
   usePagesStore,
   useNavigationEventsStore
 } from '@/stores/navigation'
-import { DIRECTION } from "@/utils/constants";
+import {
+  DIRECTION
+} from "@/utils/constants";
 
 let wrapper;
 
 describe('Presenter.vue', () => {
-  beforeEach(() => {
-    setActivePinia(createPinia())
-  })
-
   describe('given no pages', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component)
+      wrapper = factoryWithPinia()
     })
 
     it('should not update the navigation state', () => {
@@ -57,7 +54,7 @@ describe('Presenter.vue', () => {
 
   describe('given ONE page', () => {
     beforeEach(() => {
-      wrapper = mount(Component, {
+      wrapper = factoryWithPinia({
         slots: {
           default: Page
         }
@@ -93,7 +90,7 @@ describe('Presenter.vue', () => {
 
   describe('given THREE pages', () => {
     beforeEach(() => {
-      wrapper = mount(Component, {
+      wrapper = factoryWithPinia({
         slots: {
           default: [
             Page,
@@ -167,8 +164,19 @@ describe('Presenter.vue', () => {
         await wrapper.trigger('keydown.right')
         await wrapper.trigger('keydown.right')
         await wrapper.trigger('keydown.right')
-        expect(navigationEvents.count).toBe(3)
+        expect(navigationEvents.count).toBe(2)
       })
     })
   })
 })
+
+const factoryWithPinia = (options) => {
+  return mount(Component, {
+    ...options,
+    global: {
+      plugins: [createTestingPinia({
+        stubActions: false
+      })],
+    },
+  });
+}
