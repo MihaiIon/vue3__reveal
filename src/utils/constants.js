@@ -3,4 +3,4 @@ export const DIRECTION = {
   RIGHT: 'RIGHT',
   DOWN: 'DOWN',
   LEFT: 'LEFT'
-};
+}

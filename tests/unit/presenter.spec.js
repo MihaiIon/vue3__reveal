@@ -1,5 +1,4 @@
 import {
-  shallowMount,
   mount
 } from '@vue/test-utils'
 import {
@@ -15,9 +14,9 @@ import {
 } from '@/stores/navigation'
 import {
   DIRECTION
-} from "@/utils/constants";
+} from '@/utils/constants'
 
-let wrapper;
+let wrapper
 
 describe('Presenter.vue', () => {
   describe('given no pages', () => {
@@ -29,7 +28,7 @@ describe('Presenter.vue', () => {
       const pages = usePagesStore()
 
       expect(pages.count).toBe(0)
-    });
+    })
 
     describe('when pressing the LEFT arrow', () => {
       it('should not send a navigation event', async () => {
@@ -176,7 +175,7 @@ const factoryWithPinia = (options) => {
     global: {
       plugins: [createTestingPinia({
         stubActions: false
-      })],
-    },
-  });
+      })]
+    }
+  })
 }

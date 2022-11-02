@@ -5,25 +5,25 @@
 </template>
 
 <script>
-import { v4 as uuidv4 } from "uuid";
-import { usePagesStore } from "@/stores/navigation";
+import { v4 as uuidv4 } from 'uuid'
+import { usePagesStore } from '@/stores/navigation'
 
 export default {
-  data() {
+  data () {
     return {
       instanceId: uuidv4(),
-      pages: usePagesStore(),
-    };
+      pages: usePagesStore()
+    }
   },
-  created() {
-    this.registerPage();
+  created () {
+    this.registerPage()
   },
   methods: {
-    registerPage() {
-      this.pages.registerPageById(this.instanceId);
-    },
-  },
-};
+    registerPage () {
+      this.pages.registerPageById(this.instanceId)
+    }
+  }
+}
 </script>
 
 <style></style>
