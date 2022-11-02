@@ -6,6 +6,8 @@ import router from '@/router'
 import components from '@/components/index'
 import iconComponents from '@/assets/icons/index'
 
+import 'normalize.css'
+
 const pinia = createPinia()
 const app = createApp(App)
 
