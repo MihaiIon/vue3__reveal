@@ -18,6 +18,9 @@ export const usePagesStore = defineStore('pages', {
         id: pageId,
         currentSlideIndex: 0
       })
+    },
+    clear () {
+      this.pages = []
     }
   }
 })

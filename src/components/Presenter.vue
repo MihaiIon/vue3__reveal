@@ -11,16 +11,42 @@
 <script>
 import { useNavigationEventsStore, usePagesStore } from '@/stores/navigation'
 import { DIRECTION } from '@/utils/constants'
+import { DIRECTION, KEY_CODE } from '@/utils/constants'
+
+const getClientWidth = () => {
+  let clientWidth = window.innerWidth
+  clientWidth = clientWidth || document.documentElement.clientWidth
+  clientWidth = clientWidth || document.body.clientWidth
+
+  return clientWidth
+}
 
 export default {
   data () {
     return {
+      clientWidth: getClientWidth(),
       currentPageIndex: 0,
       navigationEvents: useNavigationEventsStore(),
       pages: usePagesStore()
     }
   },
+  mounted () {
+    this.$nextTick(() => {
+      window.addEventListener('resize', this.onResize)
+      window.addEventListener('keydown', this.onKeydown)
+    })
+  },
+  beforeUnmount () {
+    window.removeEventListener('resize', this.onResize)
+    window.removeEventListener('keydown', this.onKeydown)
+
+    this.pages.clear()
+  },
   methods: {
+    onKeydown (event) {
+      if (event.keyCode === KEY_CODE.LEFT) return this.onPageLeft()
+      if (event.keyCode === KEY_CODE.RIGHT) return this.onPageRight()
+    },
     onPageLeft () {
       if (this.pages.count < 2) return
       if (this.currentPageIndex === 0) return
@@ -50,6 +76,9 @@ export default {
       )
 
       this.currentPageIndex = nextPageIndex
+    },
+    onResize () {
+      this.clientWidth = getClientWidth()
     }
   }
 }
