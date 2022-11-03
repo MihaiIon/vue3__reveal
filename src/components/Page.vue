@@ -6,7 +6,7 @@
 
 <script>
 import { v4 as uuidv4 } from 'uuid'
-import { usePagesStore } from '@/stores/navigation'
+import { usePagesStore } from '@/stores/navigation-events'
 
 export default {
   data () {

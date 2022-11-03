@@ -12,10 +12,8 @@ import {
   DIRECTION,
   KEY_CODE
 } from '@/utils/constants'
-import {
-  usePagesStore,
-  useNavigationEventsStore
-} from '@/stores/navigation'
+import { usePagesStore } from '@/stores/pages'
+import { useNavigationEventsStore } from '@/stores/navigation-events'
 
 let wrapper
 

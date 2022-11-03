@@ -8,7 +8,8 @@
 </template>
 
 <script>
-import { useNavigationEventsStore, usePagesStore } from '@/stores/navigation'
+import { usePagesStore } from '@/stores/pages'
+import { useNavigationEventsStore } from '@/stores/navigation-events'
 import { DIRECTION, KEY_CODE } from '@/utils/constants'
 
 const getClientWidth = () => {
