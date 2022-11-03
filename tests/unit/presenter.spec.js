@@ -128,7 +128,7 @@ describe('Presenter.vue', () => {
       })
     })
 
-    describe('when pressing the LEFT arrow followed by the RIGHT arrow', () => {
+    describe('when pressing the RIGHT arrow followed by the LEFT arrow', () => {
       it('should send a LEFT navigation event and a RIGHT navigation event', async () => {
         const navigationEvents = useNavigationEventsStore()
 
