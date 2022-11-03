@@ -43,7 +43,7 @@ export default {
     style () {
       return {
         width: `${this.width}px`,
-        transform: `translateX(${this.xOffset}px)`
+        transform: `translateX(${-this.xOffset}px)`
       }
     },
     width () {
