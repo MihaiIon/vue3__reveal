@@ -1,29 +1,29 @@
 <template>
-  <div
-    class="c-presenter"
-    :style="style"
-  >
-    <slot />
-  </div>
+  <Viewport>
+    <div
+      class="c-presenter"
+      :style="style"
+    >
+      <slot />
+    </div>
+  </Viewport>
 </template>
 
 <script>
+import { useClientDimensionsStore } from '@/stores/client-dimensions'
 import { usePagesStore } from '@/stores/pages'
 import { useNavigationEventsStore } from '@/stores/navigation-events'
 import { DIRECTION, KEY_CODE } from '@/utils/constants'
 
-const getClientWidth = () => {
-  let clientWidth = window.innerWidth
-  clientWidth = clientWidth || document.documentElement.clientWidth
-  clientWidth = clientWidth || document.body.clientWidth
-
-  return clientWidth
-}
+import Viewport from '@/components/Viewport.vue'
 
 export default {
+  components: {
+    Viewport
+  },
   data () {
     return {
-      clientWidth: getClientWidth(),
+      clientDimentions: useClientDimensionsStore(),
       currentPageIndex: 0,
       navigationEvents: useNavigationEventsStore(),
       pages: usePagesStore()
@@ -31,15 +31,13 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      window.addEventListener('resize', this.onResize)
       window.addEventListener('keydown', this.onKeydown)
     })
   },
   beforeUnmount () {
-    window.removeEventListener('resize', this.onResize)
     window.removeEventListener('keydown', this.onKeydown)
 
-    this.pages.clear()
+    this.clearPages()
   },
   computed: {
     style () {
@@ -49,13 +47,16 @@ export default {
       }
     },
     width () {
-      return this.clientWidth * this.pages.count
+      return this.clientDimentions.width * this.pages.count
     },
     xOffset () {
-      return this.currentPageIndex * this.clientWidth
+      return this.clientDimentions.width * this.currentPageIndex
     }
   },
   methods: {
+    clearPages () {
+      this.pages.clear()
+    },
     onKeydown (event) {
       if (event.keyCode === KEY_CODE.LEFT) return this.onPageLeft()
       if (event.keyCode === KEY_CODE.RIGHT) return this.onPageRight()
@@ -89,9 +90,6 @@ export default {
       )
 
       this.currentPageIndex = nextPageIndex
-    },
-    onResize () {
-      this.clientWidth = getClientWidth()
     }
   }
 }
@@ -101,5 +99,7 @@ export default {
 .c-presenter {
   height: 100%;
   width: 100%;
+
+  transition: transform 0.5s easing;
 }
 </style>
