@@ -9,13 +9,13 @@ import Component from '@/components/Presenter.vue'
 import Page from '@/components/Page.vue'
 
 import {
-  usePagesStore,
-  useNavigationEventsStore
-} from '@/stores/navigation'
-import {
   DIRECTION,
   KEY_CODE
 } from '@/utils/constants'
+import {
+  usePagesStore,
+  useNavigationEventsStore
+} from '@/stores/navigation'
 
 let wrapper
 

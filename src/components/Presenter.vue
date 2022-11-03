@@ -1,8 +1,7 @@
 <template>
   <div
     class="c-presenter"
-    @keydown.right="onPageRight"
-    @keydown.left="onPageLeft"
+    :style="style"
   >
     <slot />
   </div>
@@ -10,7 +9,6 @@
 
 <script>
 import { useNavigationEventsStore, usePagesStore } from '@/stores/navigation'
-import { DIRECTION } from '@/utils/constants'
 import { DIRECTION, KEY_CODE } from '@/utils/constants'
 
 const getClientWidth = () => {
@@ -41,6 +39,20 @@ export default {
     window.removeEventListener('keydown', this.onKeydown)
 
     this.pages.clear()
+  },
+  computed: {
+    style () {
+      return {
+        width: `${this.width}px`,
+        transform: `translateX(${this.xOffset}px)`
+      }
+    },
+    width () {
+      return this.clientWidth * this.pages.count
+    },
+    xOffset () {
+      return this.currentPageIndex * this.clientWidth
+    }
   },
   methods: {
     onKeydown (event) {
@@ -84,4 +96,9 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.c-presenter {
+  height: 100%;
+  width: 100%;
+}
+</style>
