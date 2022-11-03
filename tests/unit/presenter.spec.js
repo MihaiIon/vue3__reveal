@@ -65,7 +65,7 @@ describe('Presenter.vue', () => {
       expect(pages.count).toBe(1)
     })
 
-    describe.only('when destroying the component', () => {
+    describe('when destroying the component', () => {
       it('should clear all registered pages', () => {
         wrapper.unmount()
 
