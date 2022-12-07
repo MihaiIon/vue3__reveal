@@ -12,40 +12,41 @@ import {
   DIRECTION,
   KEY_CODE
 } from '@/utils/constants'
-import { usePagesStore } from '@/stores/pages'
-import { useNavigationEventsStore } from '@/stores/navigation-events'
+import { useNavigationStore } from '@/stores/navigation'
 
-let wrapper
+let wrapper, navigationStore
 
 describe('Presenter.vue', () => {
+  afterEach(() => navigationStore && navigationStore.reset())
+
   describe('given no pages', () => {
     beforeEach(() => {
-      factoryWithPinia()
+      wrapper = factoryWithPinia()
+
+      navigationStore = useNavigationStore()
     })
 
-    it('should not update the navigation state', () => {
-      const pages = usePagesStore()
+    it('should have a page count of 0', () => {
+      expect(navigationStore.pageCount).toBe(0)
+    })
 
-      expect(pages.count).toBe(0)
+    it('should not have an active page', () => {
+      expect(navigationStore.activePageIndex).toBeNull
     })
 
     describe('when pressing the LEFT arrow', () => {
-      it('should not send a navigation event', () => {
-        const navigationEvents = useNavigationEventsStore()
+      it('should not send a navigation event', async () => {
+        await wrapper.trigger('keydown.left')
 
-        dispatchKeydownForLeftArrow()
-
-        expect(navigationEvents.count).toBe(0)
+        expect(navigationStore.eventCount).toBe(0)
       })
     })
 
     describe('when pressing the RIGHT arrow', () => {
-      it('should not send a navigation event', () => {
-        const navigationEvents = useNavigationEventsStore()
+      it('should not send a navigation event', async () => {
+        await wrapper.trigger('keydown.right')
 
-        dispatchKeydownForRightArrow()
-
-        expect(navigationEvents.count).toBe(0)
+        expect(navigationStore.eventCount).toBe(0)
       })
     })
   })
@@ -57,48 +58,66 @@ describe('Presenter.vue', () => {
           default: Page
         }
       })
+
+      navigationStore = useNavigationStore()
     })
 
-    it('should register the page', () => {
-      const pages = usePagesStore()
+    it('should have a page count of 1', () => {
+      expect(navigationStore.pageCount).toBe(1)
+    })
 
-      expect(pages.count).toBe(1)
+    it('should set the first page as the active page', () => {
+      expect(navigationStore.activePageIndex).toBe(0)
     })
 
     describe('when destroying the component', () => {
+      beforeEach(() => wrapper.unmount())
+
       it('should clear all registered pages', () => {
-        wrapper.unmount()
+        expect(navigationStore.pageCount).toBe(0)
+      })
 
-        const pages = usePagesStore()
+      it('should clear all events', () => {
+        expect(navigationStore.eventCount).toBe(0)
+      })
 
-        expect(pages.count).toBe(0)
+      it('should not have an active page', () => {
+        expect(navigationStore.activePageIndex).toBeNull
       })
     })
 
     describe('when pressing the LEFT arrow', () => {
-      it('should not send a navigation event', () => {
-        const navigationEvents = useNavigationEventsStore()
+      beforeEach(async () => {
+        await wrapper.trigger('keydown.left')
+      })
 
-        dispatchKeydownForLeftArrow()
+      it('should still keep the first page as the active page', () => {
+        expect(navigationStore.activePageIndex).toBe(0)
+      })
 
-        expect(navigationEvents.count).toBe(0)
+      it('should not send a navigation event (as we cannot go left)', () => {
+        expect(navigationStore.eventCount).toBe(0)
       })
     })
 
     describe('when pressing the RIGHT arrow', () => {
-      it('should not send a navigation event', () => {
-        const navigationEvents = useNavigationEventsStore()
+      beforeEach(async () => {
+        await wrapper.trigger('keydown.right')
+      })
 
-        dispatchKeydownForRightArrow()
+      it('should still keep the first page as the active page', () => {
+        expect(navigationStore.activePageIndex).toBe(0)
+      })
 
-        expect(navigationEvents.count).toBe(0)
+      it('should not send a navigation event (as we cannot go right)', () => {
+        expect(navigationStore.eventCount).toBe(0)
       })
     })
   })
 
   describe('given THREE pages', () => {
     beforeEach(() => {
-      factoryWithPinia({
+      wrapper = factoryWithPinia({
         slots: {
           default: [
             Page,
@@ -107,74 +126,102 @@ describe('Presenter.vue', () => {
           ]
         }
       })
+
+      navigationStore = useNavigationStore()
     })
 
-    it('should update the navigation state', () => {
-      const pages = usePagesStore()
+    it('should have a page count of 3', () => {
+      expect(navigationStore.pageCount).toBe(3)
+    })
 
-      expect(pages.count).toBe(3)
+    it('should set the first page as the active page', () => {
+      expect(navigationStore.activePageIndex).toBe(0)
     })
 
     describe('when pressing the LEFT arrow', () => {
-      it('should not send a LEFT navigation event (as we cannot go left)', async () => {
-        const navigationEvents = useNavigationEventsStore()
+      beforeEach(async () => {
+        await wrapper.trigger('keydown.left')
+      })
 
-        dispatchKeydownForLeftArrow()
+      it('should still keep the first page as the active page', () => {
+        expect(navigationStore.activePageIndex).toBe(0)
+      })
 
-        expect(navigationEvents.count).toBe(0)
+      it('should not send a navigation event (as we cannot go left)', () => {
+        expect(navigationStore.eventCount).toBe(0)
       })
     })
 
     describe('when pressing the RIGHT arrow', () => {
-      it('should send a RIGHT navigation event', async () => {
-        const navigationEvents = useNavigationEventsStore()
+      beforeEach(async () => {
+        await wrapper.trigger('keydown.right')
+      })
 
-        dispatchKeydownForRightArrow()
-        expect(navigationEvents.count).toBe(1)
-        expect(navigationEvents.lastEvent.direction).toBe(DIRECTION.RIGHT)
-        expect(navigationEvents.lastEvent.fromPageIndex).toBe(0)
-        expect(navigationEvents.lastEvent.toPageIndex).toBe(1)
+      it('should set the second page as the active page', () => {
+        expect(navigationStore.activePageIndex).toBe(1)
+      })
+
+      it('should send a RIGHT navigation event', () => {
+        expect(navigationStore.eventCount).toBe(1)
+        expect(navigationStore.lastEvent.direction).toBe(DIRECTION.RIGHT)
+        expect(navigationStore.lastEvent.fromPageIndex).toBe(0)
+        expect(navigationStore.lastEvent.toPageIndex).toBe(1)
       })
     })
 
     describe('when pressing the RIGHT arrow followed by the LEFT arrow', () => {
-      it('should send a LEFT navigation event and a RIGHT navigation event', () => {
-        const navigationEvents = useNavigationEventsStore()
+      it('should set the first page as the active page', async () => {
+        await wrapper.trigger('keydown.right')
+        await wrapper.trigger('keydown.left')
 
-        dispatchKeydownForRightArrow()
-        expect(navigationEvents.count).toBe(1)
-        expect(navigationEvents.lastEvent.direction).toBe(DIRECTION.RIGHT)
-        expect(navigationEvents.lastEvent.fromPageIndex).toBe(0)
-        expect(navigationEvents.lastEvent.toPageIndex).toBe(1)
+        expect(navigationStore.activePageIndex).toBe(0)
+      })
 
-        dispatchKeydownForLeftArrow()
-        expect(navigationEvents.count).toBe(2)
-        expect(navigationEvents.lastEvent.direction).toBe(DIRECTION.LEFT)
-        expect(navigationEvents.lastEvent.fromPageIndex).toBe(1)
-        expect(navigationEvents.lastEvent.toPageIndex).toBe(0)
+      it('should send a LEFT navigation event and a RIGHT navigation event', async () => {
+        const navigationStore = useNavigationStore()
+
+        await wrapper.trigger('keydown.right')
+        expect(navigationStore.eventCount).toBe(1)
+        expect(navigationStore.lastEvent.direction).toBe(DIRECTION.RIGHT)
+        expect(navigationStore.lastEvent.fromPageIndex).toBe(0)
+        expect(navigationStore.lastEvent.toPageIndex).toBe(1)
+
+        await wrapper.trigger('keydown.left')
+        expect(navigationStore.eventCount).toBe(2)
+        expect(navigationStore.lastEvent.direction).toBe(DIRECTION.LEFT)
+        expect(navigationStore.lastEvent.fromPageIndex).toBe(1)
+        expect(navigationStore.lastEvent.toPageIndex).toBe(0)
       })
     })
 
     describe('when pressing 2 RIGHT arrows', () => {
+      beforeEach(async () => {
+        await wrapper.trigger('keydown.right')
+        await wrapper.trigger('keydown.right')
+      })
+
+      it('should set the third page as the active page', () => {
+        expect(navigationStore.activePageIndex).toBe(2)
+      })
+
       it('should send 2 RIGHT navigation events', () => {
-        const navigationEvents = useNavigationEventsStore()
-
-        dispatchKeydownForRightArrow()
-        dispatchKeydownForRightArrow()
-
-        expect(navigationEvents.count).toBe(2)
+        expect(navigationStore.eventCount).toBe(2)
       })
     })
 
     describe('when pressing 3 RIGHT arrows', () => {
-      it('should only send 2 RIGHT navigation events (as we cannot go further right)', () => {
-        const navigationEvents = useNavigationEventsStore()
+      beforeEach(async () => {
+        await wrapper.trigger('keydown.right')
+        await wrapper.trigger('keydown.right')
+        await wrapper.trigger('keydown.right')
+      })
 
-        dispatchKeydownForRightArrow()
-        dispatchKeydownForRightArrow()
-        dispatchKeydownForRightArrow()
+      it('should set the third page as the active page', () => {
+        expect(navigationStore.activePageIndex).toBe(2)
+      })
 
-        expect(navigationEvents.count).toBe(2)
+      it('should send 2 RIGHT navigation events  (as we cannot go further right)', () => {
+        expect(navigationStore.eventCount).toBe(2)
       })
     })
   })
@@ -183,22 +230,11 @@ describe('Presenter.vue', () => {
 const factoryWithPinia = (options) => {
   return mount(Component, {
     ...options,
+    attachTo: document.body,
     global: {
       plugins: [createTestingPinia({
         stubActions: false
       })]
     }
   })
-}
-
-const dispatchKeydownForLeftArrow = () => {
-  const event = new KeyboardEvent('keydown', { keyCode: KEY_CODE.LEFT })
-
-  global.window.dispatchEvent(event)
-}
-
-const dispatchKeydownForRightArrow = () => {
-  const event = new KeyboardEvent('keydown', { keyCode: KEY_CODE.RIGHT })
-
-  global.window.dispatchEvent(event)
 }

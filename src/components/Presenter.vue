@@ -10,9 +10,10 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'pinia'
+
 import { useClientDimensionsStore } from '@/stores/client-dimensions'
-import { usePagesStore } from '@/stores/pages'
-import { useNavigationEventsStore } from '@/stores/navigation-events'
+import { useNavigationStore } from '@/stores/navigation'
 import { DIRECTION, KEY_CODE } from '@/utils/constants'
 
 import Viewport from '@/components/Viewport.vue'
@@ -23,23 +24,19 @@ export default {
   },
   data () {
     return {
-      clientDimentions: useClientDimensionsStore(),
-      currentPageIndex: 0,
-      navigationEvents: useNavigationEventsStore(),
-      pages: usePagesStore()
+      clientDimentions: useClientDimensionsStore()
     }
   },
-  mounted () {
-    this.$nextTick(() => {
-      window.addEventListener('keydown', this.onKeydown)
-    })
+  created () {
+    window.addEventListener('keydown', this.onKeydown)
   },
   beforeUnmount () {
     window.removeEventListener('keydown', this.onKeydown)
 
-    this.clearPages()
+    this.resetNavigation()
   },
   computed: {
+    ...mapState(useNavigationStore, ['activePageIndex', 'pageCount', 'eventCount']),
     style () {
       return {
         width: `${this.width}px`,
@@ -47,49 +44,46 @@ export default {
       }
     },
     width () {
-      return this.clientDimentions.width * this.pages.count
+      return this.clientDimentions.width * this.pageCount
     },
     xOffset () {
-      return this.clientDimentions.width * this.currentPageIndex
+      return this.clientDimentions.width * this.activePageIndex
     }
   },
   methods: {
-    clearPages () {
-      this.pages.clear()
-    },
+    ...mapActions(useNavigationStore, ['addPageEvent']),
+    ...mapActions(useNavigationStore, { resetNavigation: 'reset' }),
     onKeydown (event) {
+      if (this.activePageIndex === null) return
+
       if (event.keyCode === KEY_CODE.LEFT) return this.onPageLeft()
       if (event.keyCode === KEY_CODE.RIGHT) return this.onPageRight()
     },
     onPageLeft () {
-      if (this.pages.count < 2) return
-      if (this.currentPageIndex === 0) return
+      if (this.pageCount < 2) return
+      if (this.activePageIndex === 0) return
 
-      const previousPageIndex = this.currentPageIndex
-      const nextPageIndex = this.currentPageIndex - 1
+      const previousPageIndex = this.activePageIndex
+      const nextPageIndex = this.activePageIndex - 1
 
-      this.navigationEvents.addPageEvent(
+      this.addPageEvent(
         DIRECTION.LEFT,
         previousPageIndex,
         nextPageIndex
       )
-
-      this.currentPageIndex = nextPageIndex
     },
     onPageRight () {
-      if (this.pages.count < 2) return
-      if (this.currentPageIndex + 1 >= this.pages.count) return
+      if (this.pageCount < 2) return
+      if (this.activePageIndex + 1 >= this.pageCount) return
 
-      const previousPageIndex = this.currentPageIndex
-      const nextPageIndex = this.currentPageIndex + 1
+      const previousPageIndex = this.activePageIndex
+      const nextPageIndex = this.activePageIndex + 1
 
-      this.navigationEvents.addPageEvent(
+      this.addPageEvent(
         DIRECTION.RIGHT,
         previousPageIndex,
         nextPageIndex
       )
-
-      this.currentPageIndex = nextPageIndex
     }
   }
 }
@@ -100,6 +94,6 @@ export default {
   height: 100%;
   width: 100%;
 
-  transition: transform 0.5s easing;
+  transition: transform 0.5s;
 }
 </style>
