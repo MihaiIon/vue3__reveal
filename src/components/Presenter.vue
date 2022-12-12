@@ -1,12 +1,10 @@
 <template>
-  <Viewport>
-    <div
-      class="c-presenter"
-      :style="style"
-    >
-      <slot />
-    </div>
-  </Viewport>
+  <main
+    class="c-presenter"
+    :style="style"
+  >
+    <slot />
+  </main>
 </template>
 
 <script>
@@ -15,18 +13,18 @@ import { mapState, mapActions } from 'pinia'
 import { useViewportStore } from '@/stores/viewport'
 import { useNavigationStore } from '@/stores/navigation'
 import { DIRECTION, KEY_CODE } from '@/utils/constants'
-
-import Viewport from '@/components/Viewport.vue'
+import { getClientWidth } from '@/utils/helpers'
 
 export default {
-  components: {
-    Viewport
-  },
   created () {
     window.addEventListener('keydown', this.onKeydown)
+
+    window.addEventListener('resize', this.onResize)
+    this.updateViewport()
   },
   beforeUnmount () {
     window.removeEventListener('keydown', this.onKeydown)
+    window.removeEventListener('resize', this.onResize)
 
     this.resetNavigation()
   },
@@ -51,6 +49,7 @@ export default {
   methods: {
     ...mapActions(useNavigationStore, ['addPageEvent']),
     ...mapActions(useNavigationStore, { resetNavigation: 'reset' }),
+    ...mapActions(useViewportStore, { updateViewportWidth: 'updateWidth' }),
     onKeydown (event) {
       if (this.activePageIndex === null || this.pageCount < 2) return
 
@@ -80,6 +79,13 @@ export default {
         previousPageIndex,
         nextPageIndex
       )
+    },
+    onResize () {
+      this.updateViewport()
+    },
+    updateViewport () {
+      const width = getClientWidth()
+      this.updateViewportWidth(width)
     }
   }
 }
