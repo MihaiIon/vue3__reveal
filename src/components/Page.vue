@@ -13,7 +13,7 @@ import { getCurrentInstance, ref } from 'vue'
 // import { v4 as uuidv4 } from 'uuid'
 // import { usePagesStore } from '@/stores/navigation-events'
 import { useNavigationStore } from '@/stores/navigation'
-// import { useClientDimensionsStore } from '@/stores/client-dimensions'
+// import { useViewportStore } from '@/stores/client-dimensions'
 
 export default {
   setup () {
@@ -31,7 +31,7 @@ export default {
 //   data () {
 //     return {
 //       instanceId: uuidv4(),
-//       clientDimensions: useClientDimensionsStore(),
+//       clientDimensions: useViewportStore(),
 //       pages: usePagesStore()
 //     }
 //   },
