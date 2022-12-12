@@ -8,10 +8,7 @@ import {
 import Component from '@/components/Presenter.vue'
 import Page from '@/components/Page.vue'
 
-import {
-  DIRECTION,
-  KEY_CODE
-} from '@/utils/constants'
+import { DIRECTION } from '@/utils/constants'
 import { useNavigationStore } from '@/stores/navigation'
 
 let wrapper, navigationStore
