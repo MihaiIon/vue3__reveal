@@ -1,7 +1,7 @@
 <template>
   <main
     class="c-presentation"
-    :style="style"
+    :style="presentationStyle"
   >
     <slot />
   </main>
@@ -13,7 +13,7 @@ import { mapState, mapActions } from 'pinia'
 import { useViewportStore } from '@/stores/viewport'
 import { useNavigationStore } from '@/stores/navigation'
 import { DIRECTION, KEY_CODE } from '@/utils/constants'
-import { getClientWidth } from '@/utils/helpers'
+import { getWindowHeight, getWindowWidth } from '@/utils/helpers'
 
 export default {
   created () {
@@ -29,9 +29,9 @@ export default {
     this.resetNavigation()
   },
   computed: {
-    ...mapState(useViewportStore, { viewportWidth: 'width' }),
+    ...mapState(useViewportStore, { viewportHeight: 'height', viewportWidth: 'width' }),
     ...mapState(useNavigationStore, ['activePageIndex', 'eventCount', 'pageCount']),
-    style () {
+    presentationStyle () {
       let width = this.viewportWidth * this.pageCount
       let xOffset = -(this.viewportWidth * this.activePageIndex)
 
@@ -41,6 +41,7 @@ export default {
       }
 
       return {
+        height: `${this.viewportHeight}px`,
         width: `${width}px`,
         transform: `translateX(${xOffset}px)`
       }
@@ -49,7 +50,7 @@ export default {
   methods: {
     ...mapActions(useNavigationStore, ['addPageEvent']),
     ...mapActions(useNavigationStore, { resetNavigation: 'reset' }),
-    ...mapActions(useViewportStore, { updateViewportWidth: 'updateWidth' }),
+    ...mapActions(useViewportStore, { updateViewportHeightAndWidth: 'updateHeightAndWidth' }),
     onKeydown (event) {
       if (this.activePageIndex === null || this.pageCount < 2) return
 
@@ -84,8 +85,10 @@ export default {
       this.updateViewport()
     },
     updateViewport () {
-      const width = getClientWidth()
-      this.updateViewportWidth(width)
+      const height = getWindowHeight()
+      const width = getWindowWidth()
+
+      this.updateViewportHeightAndWidth(height, width)
     }
   }
 }

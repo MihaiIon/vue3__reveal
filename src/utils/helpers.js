@@ -1,7 +1,15 @@
-export const getClientWidth = () => {
-  let clientWidth = window.innerWidth
-  clientWidth = clientWidth || document.documentElement.clientWidth
-  clientWidth = clientWidth || document.body.clientWidth
+export const getWindowHeight = () => {
+  let windowHeight = window.innerHeight
+  windowHeight = windowHeight || document.documentElement.clientHeight
+  windowHeight = windowHeight || document.body.clientHeight
 
-  return clientWidth
+  return windowHeight
+}
+
+export const getWindowWidth = () => {
+  let windowWidth = window.innerWidth
+  windowWidth = windowWidth || document.documentElement.clientWidth
+  windowWidth = windowWidth || document.body.clientWidth
+
+  return windowWidth
 }

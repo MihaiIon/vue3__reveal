@@ -12,10 +12,8 @@ export const useViewportStore = defineStore('viewport', {
     width: (state) => state._width
   },
   actions: {
-    // updateHeight (height) {
-    //   this.height = height
-    // },
-    updateWidth (width) {
+    updateHeightAndWidth (height, width) {
+      this._height = height
       this._width = width
     }
   }

@@ -8,14 +8,17 @@ import {
 import Presentation from '@/components/Presentation.vue'
 import Page from '@/components/Page.vue'
 
-const CLIENT_WIDTH = 1024
-const RESIZED_CLIENT_WIDTH = 900
+const WINDOW_HEIGHT = 1200
+const RESIZED_WINDOW_HEIGHT = 800
+
+const WINDOW_WIDTH = 1024
+const RESIZED_WINDOW_WIDTH = 900
 
 let wrapper
 
 describe('Presentation.vue', () => {
   beforeEach(() => {
-    resizeClientWidthTo(CLIENT_WIDTH)
+    resizeWindowTo(WINDOW_HEIGHT, WINDOW_WIDTH)
   })
 
   describe('given no pages', () => {
@@ -23,25 +26,33 @@ describe('Presentation.vue', () => {
       wrapper = factoryWithPinia()
     })
 
-    it("should match the presentation width to the client's width", () => {
-      expect(wrapper.vm.style.width).toBe(`${CLIENT_WIDTH}px`)
+    it("should match the presentation's height to the window's height", () => {
+      expect(wrapper.vm.presentationStyle.height).toBe(`${WINDOW_HEIGHT}px`)
+    })
+
+    it("should match the presentation's width to the window's width", () => {
+      expect(wrapper.vm.presentationStyle.width).toBe(`${WINDOW_WIDTH}px`)
     })
 
     it('should not translate the presentation on the X axis', () => {
-      expect(wrapper.vm.style.transform).toBe('translateX(0px)')
+      expect(wrapper.vm.presentationStyle.transform).toBe('translateX(0px)')
     })
 
     describe('when resizing the window', () => {
       beforeEach(() => {
-        resizeClientWidthTo(RESIZED_CLIENT_WIDTH)
+        resizeWindowTo(RESIZED_WINDOW_HEIGHT, RESIZED_WINDOW_WIDTH)
       })
 
-      it("should match the presentation width to the resized client's width", () => {
-        expect(wrapper.vm.style.width).toBe(`${RESIZED_CLIENT_WIDTH}px`)
+      it("should match the presentation's height to the window's height", () => {
+        expect(wrapper.vm.presentationStyle.height).toBe(`${RESIZED_WINDOW_HEIGHT}px`)
+      })
+
+      it("should match the presentation's width to the resized winsow's width", () => {
+        expect(wrapper.vm.presentationStyle.width).toBe(`${RESIZED_WINDOW_WIDTH}px`)
       })
 
       it('should STILL not translate the presentation on the X axis', () => {
-        expect(wrapper.vm.style.transform).toBe('translateX(0px)')
+        expect(wrapper.vm.presentationStyle.transform).toBe('translateX(0px)')
       })
     })
 
@@ -49,7 +60,7 @@ describe('Presentation.vue', () => {
       it('should STILL not translate the presentation on the X axis', async () => {
         await wrapper.trigger('keydown.left')
 
-        expect(wrapper.vm.style.transform).toBe('translateX(0px)')
+        expect(wrapper.vm.presentationStyle.transform).toBe('translateX(0px)')
       })
     })
 
@@ -57,7 +68,7 @@ describe('Presentation.vue', () => {
       it('should STILL not translate the presentation on the X axis', async () => {
         await wrapper.trigger('keydown.right')
 
-        expect(wrapper.vm.style.transform).toBe('translateX(0px)')
+        expect(wrapper.vm.presentationStyle.transform).toBe('translateX(0px)')
       })
     })
   })
@@ -71,25 +82,29 @@ describe('Presentation.vue', () => {
       })
     })
 
-    it("should match the presentation width to the client's width", () => {
-      expect(wrapper.vm.style.width).toBe(`${CLIENT_WIDTH}px`)
+    it("should match the presentation's width to the window's width", () => {
+      expect(wrapper.vm.presentationStyle.width).toBe(`${WINDOW_WIDTH}px`)
     })
 
     it('should not translate the presentation on the X axis', () => {
-      expect(wrapper.vm.style.transform).toBe('translateX(0px)')
+      expect(wrapper.vm.presentationStyle.transform).toBe('translateX(0px)')
     })
 
     describe('when resizing the window', () => {
       beforeEach(() => {
-        resizeClientWidthTo(RESIZED_CLIENT_WIDTH)
+        resizeWindowTo(RESIZED_WINDOW_HEIGHT, RESIZED_WINDOW_WIDTH)
       })
 
-      it("should match the presentation width to the resized client's width", () => {
-        expect(wrapper.vm.style.width).toBe(`${RESIZED_CLIENT_WIDTH}px`)
+      it("should match the presentation's height to the resized winsow's height", () => {
+        expect(wrapper.vm.presentationStyle.height).toBe(`${RESIZED_WINDOW_HEIGHT}px`)
+      })
+
+      it("should match the presentation's width to the resized winsow's width", () => {
+        expect(wrapper.vm.presentationStyle.width).toBe(`${RESIZED_WINDOW_WIDTH}px`)
       })
 
       it('should STILL not translate the presentation on the X axis', () => {
-        expect(wrapper.vm.style.transform).toBe('translateX(0px)')
+        expect(wrapper.vm.presentationStyle.transform).toBe('translateX(0px)')
       })
     })
 
@@ -97,7 +112,7 @@ describe('Presentation.vue', () => {
       it('should STILL not translate the presentation on the X axis', async () => {
         await wrapper.trigger('keydown.left')
 
-        expect(wrapper.vm.style.transform).toBe('translateX(0px)')
+        expect(wrapper.vm.presentationStyle.transform).toBe('translateX(0px)')
       })
     })
 
@@ -105,7 +120,7 @@ describe('Presentation.vue', () => {
       it('should STILL not translate the presentation on the X axis', async () => {
         await wrapper.trigger('keydown.right')
 
-        expect(wrapper.vm.style.transform).toBe('translateX(0px)')
+        expect(wrapper.vm.presentationStyle.transform).toBe('translateX(0px)')
       })
     })
   })
@@ -123,25 +138,25 @@ describe('Presentation.vue', () => {
       })
     })
 
-    it("should set the presentation width to 3 times the client's width", () => {
-      expect(wrapper.vm.style.width).toBe(`${CLIENT_WIDTH * 3}px`)
+    it("should set the presentation's width to 3 times the window's width", () => {
+      expect(wrapper.vm.presentationStyle.width).toBe(`${WINDOW_WIDTH * 3}px`)
     })
 
     it('should not translate the presentation on the X axis', () => {
-      expect(wrapper.vm.style.transform).toBe('translateX(0px)')
+      expect(wrapper.vm.presentationStyle.transform).toBe('translateX(0px)')
     })
 
     describe('when resizing the window', () => {
       beforeEach(() => {
-        resizeClientWidthTo(RESIZED_CLIENT_WIDTH)
+        resizeWindowTo(RESIZED_WINDOW_HEIGHT, RESIZED_WINDOW_WIDTH)
       })
 
-      it("should set the presentation width to 3 times the resized client's width", () => {
-        expect(wrapper.vm.style.width).toBe(`${RESIZED_CLIENT_WIDTH * 3}px`)
+      it("should set the presentation's width to 3 times the resized window's width", () => {
+        expect(wrapper.vm.presentationStyle.width).toBe(`${RESIZED_WINDOW_WIDTH * 3}px`)
       })
 
       it('should STILL not translate the presentation on the X axis', () => {
-        expect(wrapper.vm.style.transform).toBe('translateX(0px)')
+        expect(wrapper.vm.presentationStyle.transform).toBe('translateX(0px)')
       })
     })
 
@@ -149,7 +164,7 @@ describe('Presentation.vue', () => {
       it('should STILL not translate the presentation on the X axis', async () => {
         await wrapper.trigger('keydown.left')
 
-        expect(wrapper.vm.style.transform).toBe('translateX(0px)')
+        expect(wrapper.vm.presentationStyle.transform).toBe('translateX(0px)')
       })
     })
 
@@ -158,15 +173,15 @@ describe('Presentation.vue', () => {
         await wrapper.trigger('keydown.right')
       })
 
-      it("should translate the presentation on the X axis (1 times the client's width) to the left", async () => {
-        expect(wrapper.vm.style.transform).toBe(`translateX(-${CLIENT_WIDTH}px)`)
+      it("should translate the presentation on the X axis (1 times the window's width) to the left", async () => {
+        expect(wrapper.vm.presentationStyle.transform).toBe(`translateX(-${WINDOW_WIDTH}px)`)
       })
 
-      describe("and resizing the window's width", () => {
-        it("should translate the presentation on the X axis (1 times the resized client's width) to the left", async () => {
-          resizeClientWidthTo(RESIZED_CLIENT_WIDTH)
+      describe('and resizing the window', () => {
+        it("should translate the presentation on the X axis (1 times the resized window's width) to the left", async () => {
+          resizeWindowTo(WINDOW_HEIGHT, RESIZED_WINDOW_WIDTH)
 
-          expect(wrapper.vm.style.transform).toBe(`translateX(-${RESIZED_CLIENT_WIDTH}px)`)
+          expect(wrapper.vm.presentationStyle.transform).toBe(`translateX(-${RESIZED_WINDOW_WIDTH}px)`)
         })
       })
     })
@@ -176,7 +191,7 @@ describe('Presentation.vue', () => {
         await wrapper.trigger('keydown.right')
         await wrapper.trigger('keydown.left')
 
-        expect(wrapper.vm.style.transform).toBe('translateX(0px)')
+        expect(wrapper.vm.presentationStyle.transform).toBe('translateX(0px)')
       })
     })
 
@@ -186,15 +201,15 @@ describe('Presentation.vue', () => {
         await wrapper.trigger('keydown.right')
       })
 
-      it("should translate the presentation on the X axis (2 times the client's width) to the left", async () => {
-        expect(wrapper.vm.style.transform).toBe(`translateX(-${CLIENT_WIDTH * 2}px)`)
+      it("should translate the presentation on the X axis (2 times the window's width) to the left", async () => {
+        expect(wrapper.vm.presentationStyle.transform).toBe(`translateX(-${WINDOW_WIDTH * 2}px)`)
       })
 
-      describe("and resizing the window's width", () => {
-        it("should translate the presentation on the X axis (2 times the resized client's width) to the left", async () => {
-          resizeClientWidthTo(RESIZED_CLIENT_WIDTH)
+      describe("and resizing the window", () => {
+        it("should translate the presentation on the X axis (2 times the resized window's width) to the left", async () => {
+          resizeWindowTo(RESIZED_WINDOW_HEIGHT, RESIZED_WINDOW_WIDTH)
 
-          expect(wrapper.vm.style.transform).toBe(`translateX(-${RESIZED_CLIENT_WIDTH * 2}px)`)
+          expect(wrapper.vm.presentationStyle.transform).toBe(`translateX(-${RESIZED_WINDOW_WIDTH * 2}px)`)
         })
       })
     })
@@ -206,15 +221,15 @@ describe('Presentation.vue', () => {
         await wrapper.trigger('keydown.right')
       })
 
-      it("should translate the presentation on the X axis (2 times the client's width) to the left - it cannot go further", async () => {
-        expect(wrapper.vm.style.transform).toBe(`translateX(-${CLIENT_WIDTH * 2}px)`)
+      it("should translate the presentation on the X axis (2 times the window's width) to the left - it cannot go further", async () => {
+        expect(wrapper.vm.presentationStyle.transform).toBe(`translateX(-${WINDOW_WIDTH * 2}px)`)
       })
 
-      describe("and resizing the window's width", () => {
-        it("should translate the presentation on the X axis (2 times the resized client's width) to the left - it cannot go further", async () => {
-          resizeClientWidthTo(RESIZED_CLIENT_WIDTH)
+      describe("and resizing the window", () => {
+        it("should translate the presentation on the X axis (2 times the resized window's width) to the left - it cannot go further", async () => {
+          resizeWindowTo(RESIZED_WINDOW_HEIGHT, RESIZED_WINDOW_WIDTH)
 
-          expect(wrapper.vm.style.transform).toBe(`translateX(-${RESIZED_CLIENT_WIDTH * 2}px)`)
+          expect(wrapper.vm.presentationStyle.transform).toBe(`translateX(-${RESIZED_WINDOW_WIDTH * 2}px)`)
         })
       })
     })
@@ -233,7 +248,8 @@ const factoryWithPinia = (options) => {
   })
 }
 
-const resizeClientWidthTo = (width) => {
+const resizeWindowTo = (height, width) => {
+  global.window.innerHeight = height || global.window.innerHeight
   global.window.innerWidth = width || global.window.innerWidth
 
   global.window.dispatchEvent(new Event('resize'))
