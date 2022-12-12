@@ -5,17 +5,14 @@
 </template>
 
 <script>
-import { useClientDimensionsStore } from '@/stores/client-dimensions'
+import { mapActions } from 'pinia'
+
+import { useViewportStore } from '@/stores/viewport'
 import { getClientWidth } from '@/utils/helpers'
 
 export default {
-  data () {
-    return {
-      clientDimensions: useClientDimensionsStore()
-    }
-  },
   mounted () {
-    this.updateClienWidth()
+    this.updateViewport()
 
     this.$nextTick(() => {
       window.addEventListener('resize', this.onResize)
@@ -25,13 +22,13 @@ export default {
     window.removeEventListener('resize', this.onResize)
   },
   methods: {
+    ...mapActions(useViewportStore, { updateViewportWidth: 'updateWidth' }),
     onResize () {
-      this.updateClienWidth()
+      this.updateViewport()
     },
-    updateClienWidth () {
+    updateViewport () {
       const width = getClientWidth()
-
-      this.clientDimensions.setWidth(width)
+      this.updateViewportWidth(width)
     }
   }
 }

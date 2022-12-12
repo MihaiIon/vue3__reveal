@@ -12,7 +12,7 @@
 <script>
 import { mapState, mapActions } from 'pinia'
 
-import { useClientDimensionsStore } from '@/stores/client-dimensions'
+import { useViewportStore } from '@/stores/viewport'
 import { useNavigationStore } from '@/stores/navigation'
 import { DIRECTION, KEY_CODE } from '@/utils/constants'
 
@@ -21,11 +21,6 @@ import Viewport from '@/components/Viewport.vue'
 export default {
   components: {
     Viewport
-  },
-  data () {
-    return {
-      clientDimentions: useClientDimensionsStore()
-    }
   },
   created () {
     window.addEventListener('keydown', this.onKeydown)
@@ -36,31 +31,33 @@ export default {
     this.resetNavigation()
   },
   computed: {
-    ...mapState(useNavigationStore, ['activePageIndex', 'pageCount', 'eventCount']),
+    ...mapState(useViewportStore, { viewportWidth: 'width' }),
+    ...mapState(useNavigationStore, ['activePageIndex', 'eventCount', 'pageCount']),
     style () {
-      return {
-        width: `${this.width}px`,
-        transform: `translateX(${-this.xOffset}px)`
+      let width = this.viewportWidth * this.pageCount
+      let xOffset = -(this.viewportWidth * this.activePageIndex)
+
+      if (this.activePageIndex === null || this.pageCount <= 1) {
+        width = this.viewportWidth
+        xOffset = 0
       }
-    },
-    width () {
-      return this.clientDimentions.width * this.pageCount
-    },
-    xOffset () {
-      return this.clientDimentions.width * this.activePageIndex
+
+      return {
+        width: `${width}px`,
+        transform: `translateX(${xOffset}px)`
+      }
     }
   },
   methods: {
     ...mapActions(useNavigationStore, ['addPageEvent']),
     ...mapActions(useNavigationStore, { resetNavigation: 'reset' }),
     onKeydown (event) {
-      if (this.activePageIndex === null) return
+      if (this.activePageIndex === null || this.pageCount < 2) return
 
       if (event.keyCode === KEY_CODE.LEFT) return this.onPageLeft()
       if (event.keyCode === KEY_CODE.RIGHT) return this.onPageRight()
     },
     onPageLeft () {
-      if (this.pageCount < 2) return
       if (this.activePageIndex === 0) return
 
       const previousPageIndex = this.activePageIndex
@@ -73,7 +70,6 @@ export default {
       )
     },
     onPageRight () {
-      if (this.pageCount < 2) return
       if (this.activePageIndex + 1 >= this.pageCount) return
 
       const previousPageIndex = this.activePageIndex
