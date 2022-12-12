@@ -1,6 +1,6 @@
 <template>
   <main
-    class="c-presenter"
+    class="c-presentation"
     :style="style"
   >
     <slot />
@@ -92,7 +92,7 @@ export default {
 </script>
 
 <style>
-.c-presenter {
+.c-presentation {
   height: 100%;
   width: 100%;
 

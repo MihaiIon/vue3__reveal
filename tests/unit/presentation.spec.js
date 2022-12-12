@@ -5,7 +5,7 @@ import {
   createTestingPinia
 } from '@pinia/testing'
 
-import Component from '@/components/Presenter.vue'
+import Presentation from '@/components/Presentation.vue'
 import Page from '@/components/Page.vue'
 
 import { DIRECTION } from '@/utils/constants'
@@ -13,7 +13,7 @@ import { useNavigationStore } from '@/stores/navigation'
 
 let wrapper, navigationStore
 
-describe('Presenter.vue', () => {
+describe('Presentation.vue', () => {
   afterEach(() => navigationStore && navigationStore.reset())
 
   describe('given no pages', () => {
@@ -225,7 +225,7 @@ describe('Presenter.vue', () => {
 })
 
 const factoryWithPinia = (options) => {
-  return mount(Component, {
+  return mount(Presentation, {
     ...options,
     attachTo: document.body,
     global: {

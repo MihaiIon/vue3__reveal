@@ -5,7 +5,7 @@ import {
   createTestingPinia
 } from '@pinia/testing'
 
-import Component from '@/components/Presenter.vue'
+import Presentation from '@/components/Presentation.vue'
 import Page from '@/components/Page.vue'
 
 const CLIENT_WIDTH = 1024
@@ -13,7 +13,7 @@ const RESIZED_CLIENT_WIDTH = 900
 
 let wrapper
 
-describe('Presenter.vue', () => {
+describe('Presentation.vue', () => {
   beforeEach(() => {
     resizeClientWidthTo(CLIENT_WIDTH)
   })
@@ -222,7 +222,7 @@ describe('Presenter.vue', () => {
 })
 
 const factoryWithPinia = (options) => {
-  return mount(Component, {
+  return mount(Presentation, {
     ...options,
     attachTo: document.body,
     global: {
