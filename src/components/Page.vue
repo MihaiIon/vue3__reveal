@@ -1,6 +1,6 @@
 <template>
-  <section class="c-page" :style="style">
-    <div class="c-page__wrapper">
+  <section class="c-page" :style="pageStyle">
+    <div class="c-page__content">
       Hello
       <slot />
     </div>
@@ -13,17 +13,22 @@ import { getCurrentInstance, ref } from 'vue'
 // import { v4 as uuidv4 } from 'uuid'
 // import { usePagesStore } from '@/stores/navigation-events'
 import { useNavigationStore } from '@/stores/navigation'
-// import { useViewportStore } from '@/stores/client-dimensions'
+import { useViewportStore } from '@/stores/viewport'
 
 export default {
   setup () {
     const instance = getCurrentInstance()
+
     const navigationStore = useNavigationStore()
+    const viewportStore = useViewportStore()
 
     const pageIndex = ref(navigationStore.registerPage(instance))
-    const style = ref('color: red')
+    const pageStyle = ref({
+      height: `${viewportStore.height}px`,
+      width: `${viewportStore.width}px`
+    })
 
-    return { pageIndex, style }
+    return { pageIndex, pageStyle }
   }
 }
 
@@ -55,13 +60,19 @@ export default {
 </script>
 
 <style>
-.c-page {
-  display: inline-block;
-}
-
-.c-page__wrapper {
-  display: flex;
+.c-page,
+.c-page__content {
   justify-content: center;
   align-items: center;
+}
+
+.c-page {
+  display: inline-flex;
+  overflow: hidden;
+}
+
+.c-page__content {
+  display: flex;
+  width: min(800px, 100%);
 }
 </style>
