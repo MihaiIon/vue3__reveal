@@ -1,9 +1,5 @@
-import {
-  mount
-} from '@vue/test-utils'
-import {
-  createTestingPinia
-} from '@pinia/testing'
+import { mount } from '@vue/test-utils'
+import { createTestingPinia } from '@pinia/testing'
 
 import Presentation from '@/components/Presentation.vue'
 import Page from '@/components/Page.vue'
@@ -225,7 +221,7 @@ describe('Presentation.vue', () => {
         expect(wrapper.vm.presentationStyle.transform).toBe(`translateX(-${WINDOW_WIDTH * 2}px)`)
       })
 
-      describe("and resizing the window", () => {
+      describe('and resizing the window', () => {
         it("should translate the presentation on the X axis (2 times the resized window's width) to the left - it cannot go further", async () => {
           resizeWindowTo(RESIZED_WINDOW_HEIGHT, RESIZED_WINDOW_WIDTH)
 

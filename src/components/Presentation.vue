@@ -1,6 +1,9 @@
 <template>
   <main
+    tabindex="0"
     class="c-presentation"
+    @keydown.left="onKeydown"
+    @keydown.right="onKeydown"
     :style="presentationStyle"
   >
     <slot />
@@ -17,13 +20,10 @@ import { getWindowHeight, getWindowWidth } from '@/utils/helpers'
 
 export default {
   created () {
-    window.addEventListener('keydown', this.onKeydown)
-
     window.addEventListener('resize', this.onResize)
     this.updateViewport()
   },
   beforeUnmount () {
-    window.removeEventListener('keydown', this.onKeydown)
     window.removeEventListener('resize', this.onResize)
 
     this.resetNavigation()
